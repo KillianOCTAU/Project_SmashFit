@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smashfit_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      APP_ENV: dev
+      APP_SECRET: smashfit_secret_key_change_in_prod_32c
+      DATABASE_URL: "mysql://smashfit:smashfit_pass@db:3306/smashfit?serverVersion=8.0&charset=utf8mb4"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - smashfit_net
+
+  db:
+    image: mysql:8.0
+    container_name: smashfit_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: smashfit
+      MYSQL_USER: smashfit
+      MYSQL_PASSWORD: smashfit_pass
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "smashfit", "-psmashfit_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smashfit_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: smashfit_pma
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: smashfit
+      PMA_PASSWORD: smashfit_pass
+    depends_on:
+      - db
+    networks:
+      - smashfit_net
+
+volumes:
+  db_data:
+
+networks:
+  smashfit_net:
+    driver: bridge
