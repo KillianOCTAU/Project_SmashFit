@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div style="max-width:400px; margin:60px auto; padding:20px; border:1px solid #ddd; border-radius:8px;">
+    <h2>📝 Créer un compte</h2>
+
+    {{ form_start(form) }}
+        <div style="margin-bottom:12px;">
+            {{ form_label(form.pseudo) }}
+            {{ form_widget(form.pseudo, {'attr': {'style': 'width:100%; padding:8px; margin-top:4px;'}}) }}
+            {{ form_errors(form.pseudo) }}
+        </div>
+        <div style="margin-bottom:12px;">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email, {'attr': {'style': 'width:100%; padding:8px; margin-top:4px;'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+        <div style="margin-bottom:12px;">
+            {{ form_label(form.plainPassword.first) }}
+            {{ form_widget(form.plainPassword.first, {'attr': {'style': 'width:100%; padding:8px; margin-top:4px;'}}) }}
+        </div>
+        <div style="margin-bottom:16px;">
+            {{ form_label(form.plainPassword.second) }}
+            {{ form_widget(form.plainPassword.second, {'attr': {'style': 'width:100%; padding:8px; margin-top:4px;'}}) }}
+            {{ form_errors(form.plainPassword) }}
+        </div>
+        <button type="submit"
+                style="width:100%; padding:10px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer;">
+            Créer mon compte
+        </button>
+    {{ form_end(form) }}
+
+    <p style="margin-top:16px; text-align:center;">
+        Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+    </p>
+</div>
+{% endblock %}
