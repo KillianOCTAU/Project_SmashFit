@@ -70,4 +70,33 @@ class Profil
 
     public function getFrequence(): ?string { return $this->frequence; }
     public function setFrequence(?string $v): static { $this->frequence = $v; return $this; }
+
+    public function isComplete(): bool
+    {
+        return $this->niveau !== null
+            && $this->styleJeu !== null
+            && $this->frequence !== null;
+    }
+
+    public function getNiveauLabel(): string
+    {
+        return match($this->niveau) {
+            'debutant'      => 'Débutant',
+            'intermediaire' => 'Intermédiaire',
+            'avance'        => 'Avancé',
+            'expert'        => 'Expert',
+            default         => 'Non renseigné',
+        };
+    }
+
+    public function getStyleJeuLabel(): string
+    {
+        return match($this->styleJeu) {
+            'attaquant' => 'Attaquant',
+            'defenseur' => 'Défenseur',
+            'complet'   => 'Joueur complet',
+            'filet'     => 'Jeu au filet',
+            default     => 'Non renseigné',
+        };
+    }
 }

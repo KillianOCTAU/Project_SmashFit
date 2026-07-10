@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<div style="max-width:700px; margin:40px auto; padding:0 20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <h1>👤 Mon profil</h1>
+        <a href="{{ path('app_profil_edit') }}"
+           style="padding:8px 16px; background:#1F3A6D; color:white; border-radius:4px; text-decoration:none;">
+            ✏️ Modifier
+        </a>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:24px; margin-bottom:20px;">
+        <h3 style="margin-top:0;">Informations du compte</h3>
+        <p><strong>Pseudo :</strong> {{ user.pseudo }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+        <p><strong>Membre depuis :</strong> {{ user.dateInscription|date('d/m/Y') }}</p>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:24px; margin-bottom:20px;">
+        <h3 style="margin-top:0;">Profil joueur</h3>
+
+        {% if not profil.isComplete %}
+            <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:4px; padding:12px; margin-bottom:16px;">
+                ⚠️ Profil incomplet.
+                <a href="{{ path('app_profil_edit') }}">Complétez votre profil</a>
+                pour obtenir des recommandations personnalisées.
+            </div>
+        {% endif %}
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div><strong>Nom :</strong> {{ profil.nom ?? '—' }}</div>
+            <div><strong>Prénom :</strong> {{ profil.prenom ?? '—' }}</div>
+            <div><strong>Âge :</strong> {{ profil.age ? profil.age ~ ' ans' : '—' }}</div>
+            <div><strong>Club :</strong> {{ profil.club ?? '—' }}</div>
+            <div><strong>N° Licence :</strong> {{ profil.numeroLicence ?? '—' }}</div>
+            <div><strong>Niveau :</strong> {{ profil.niveauLabel }}</div>
+            <div><strong>Style de jeu :</strong> {{ profil.styleJeuLabel }}</div>
+            <div><strong>Fréquence :</strong> {{ profil.frequence ? profil.frequence|capitalize : '—' }}</div>
+        </div>
+    </div>
+
+    {% if profil.isComplete %}
+    <div style="text-align:center;">
+        <a href="{{ path('app_recommandation_generate') }}"
+           style="padding:12px 32px; background:#4CAF50; color:white; border-radius:4px; text-decoration:none; font-size:1.1rem;">
+            🎯 Voir mes recommandations
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

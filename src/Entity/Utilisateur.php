@@ -33,6 +33,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $dateInscription = null;
 
+    #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+    private ?Profil $profil = null;
+
     public function __construct()
     {
         $this->dateInscription = new \DateTimeImmutable();
@@ -63,6 +66,16 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void {}
 
     public function getDateInscription(): ?\DateTimeImmutable { return $this->dateInscription; }
+
+    public function getProfil(): ?Profil { return $this->profil; }
+    public function setProfil(?Profil $profil): static
+    {
+        if ($profil !== null && $profil->getUtilisateur() !== $this) {
+            $profil->setUtilisateur($this);
+        }
+        $this->profil = $profil;
+        return $this;
+    }
 
     public function isAdmin(): bool { return in_array('ROLE_ADMIN', $this->getRoles()); }
 }
