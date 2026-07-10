@@ -25,6 +25,9 @@ class Recommandation
     #[ORM\Column(type: 'float')]
     private float $score = 0.0;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $explication = null;
+
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $dateReco;
 
@@ -44,5 +47,10 @@ class Recommandation
     public function getScore(): float { return $this->score; }
     public function setScore(float $v): static { $this->score = $v; return $this; }
 
+    public function getExplication(): ?string { return $this->explication; }
+    public function setExplication(?string $v): static { $this->explication = $v; return $this; }
+
     public function getDateReco(): \DateTimeImmutable { return $this->dateReco; }
+
+    public function getScorePourcent(): int { return (int) round($this->score * 100); }
 }
