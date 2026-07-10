@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nouvelle marque{% endblock %}
+
+{% block body %}
+<div style="max-width:500px; margin:40px auto; padding:0 20px;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+        <a href="{{ path('app_admin_marques') }}"
+           style="color:#1F3A6D; text-decoration:none;">← Retour</a>
+        <h1 style="margin:0;">Nouvelle marque</h1>
+    </div>
+
+    {{ form_start(form) }}
+        <div style="margin-bottom:16px;">
+            {{ form_label(form.nomMarque) }}
+            {{ form_widget(form.nomMarque, {'attr': {'style': 'width:100%; padding:8px; margin-top:4px;'}}) }}
+            {{ form_errors(form.nomMarque) }}
+        </div>
+        <div style="margin-bottom:24px;">
+            {{ form_label(form.pays) }}
+            {{ form_widget(form.pays, {'attr': {'style': 'width:100%; padding:8px; margin-top:4px;'}}) }}
+            {{ form_errors(form.pays) }}
+        </div>
+        <button type="submit"
+                style="padding:10px 24px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer;">
+            Enregistrer
+        </button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
