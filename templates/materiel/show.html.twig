@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ materiel.nom }}{% endblock %}
+
+{% block body %}
+<div style="max-width:800px; margin:40px auto; padding:0 20px;">
+    <a href="{{ path('app_materiel_index') }}"
+       style="color:#1F3A6D; text-decoration:none;">← Retour au catalogue</a>
+
+    <div style="display:flex; gap:30px; margin-top:20px;">
+        <div style="width:280px; flex-shrink:0;">
+            {% if materiel.imageUrl %}
+                <img src="{{ materiel.imageUrl }}" alt="{{ materiel.nom }}"
+                     style="width:100%; border-radius:8px; border:1px solid #eee;">
+            {% else %}
+                <div style="height:280px; display:flex; align-items:center; justify-content:center;
+                            background:#f0f4ff; border-radius:8px; font-size:5rem;">
+                    {{ materiel.type == 'raquette' ? '🏸' : '📦' }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="flex:1;">
+            <span style="font-size:.8rem; color:#666;">{{ materiel.typeLabel }} • {{ materiel.marque.nomMarque }}</span>
+            <h1 style="margin:8px 0 16px;">{{ materiel.nom }}</h1>
+            <p style="color:#555; line-height:1.6;">{{ materiel.description }}</p>
+
+            <table style="margin-top:20px; border-collapse:collapse; width:100%;">
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:8px; color:#888; width:140px;">Niveau recommandé</td>
+                    <td style="padding:8px; font-weight:600;">{{ materiel.niveauLabel }}</td>
+                </tr>
+                {% if materiel.poids %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:8px; color:#888;">Poids</td>
+                    <td style="padding:8px; font-weight:600;">{{ materiel.poids }}</td>
+                </tr>
+                {% endif %}
+                {% if materiel.flexibilite %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:8px; color:#888;">Flexibilité</td>
+                    <td style="padding:8px; font-weight:600;">{{ materiel.flexibilite|capitalize }}</td>
+                </tr>
+                {% endif %}
+                {% if materiel.equilibre %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:8px; color:#888;">Équilibre</td>
+                    <td style="padding:8px; font-weight:600;">{{ materiel.equilibre|replace({'-': ' '})|capitalize }}</td>
+                </tr>
+                {% endif %}
+                {% if materiel.materiau %}
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:8px; color:#888;">Matériau</td>
+                    <td style="padding:8px; font-weight:600;">{{ materiel.materiau }}</td>
+                </tr>
+                {% endif %}
+                {% if materiel.prix %}
+                <tr>
+                    <td style="padding:8px; color:#888;">Prix indicatif</td>
+                    <td style="padding:8px; font-weight:600; color:#1F3A6D;">{{ materiel.prix }}€</td>
+                </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

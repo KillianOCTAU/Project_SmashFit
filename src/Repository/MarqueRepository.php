@@ -12,4 +12,11 @@ class MarqueRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Marque::class);
     }
+
+    public function findAllOrdered(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->orderBy('m.nomMarque', 'ASC')
+            ->getQuery()->getResult();
+    }
 }

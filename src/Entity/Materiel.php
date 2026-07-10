@@ -11,6 +11,11 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'materiel')]
 class Materiel
 {
+    public const TYPES        = ['raquette', 'cordage', 'chaussures', 'volant', 'sac', 'tenue'];
+    public const NIVEAUX      = ['debutant', 'intermediaire', 'avance', 'expert', 'tous'];
+    public const FLEXIBILITES = ['flexible', 'medium', 'rigide', 'extra-rigide'];
+    public const EQUILIBRES   = ['tete-lourde', 'equilibre', 'manche-lourd'];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -46,6 +51,9 @@ class Materiel
     #[ORM\Column(type: 'decimal', precision: 8, scale: 2, nullable: true)]
     private ?string $prix = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $disponible = true;
+
     #[ORM\ManyToOne(inversedBy: 'materiels')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Marque $marque = null;
@@ -59,39 +67,53 @@ class Materiel
     }
 
     public function getId(): ?int { return $this->id; }
-
     public function getNom(): ?string { return $this->nom; }
     public function setNom(string $v): static { $this->nom = $v; return $this; }
-
     public function getType(): ?string { return $this->type; }
     public function setType(string $v): static { $this->type = $v; return $this; }
-
     public function getDescription(): ?string { return $this->description; }
     public function setDescription(string $v): static { $this->description = $v; return $this; }
-
     public function getImageUrl(): ?string { return $this->imageUrl; }
     public function setImageUrl(?string $v): static { $this->imageUrl = $v; return $this; }
-
     public function getPoids(): ?string { return $this->poids; }
     public function setPoids(?string $v): static { $this->poids = $v; return $this; }
-
     public function getEquilibre(): ?string { return $this->equilibre; }
     public function setEquilibre(?string $v): static { $this->equilibre = $v; return $this; }
-
     public function getFlexibilite(): ?string { return $this->flexibilite; }
     public function setFlexibilite(?string $v): static { $this->flexibilite = $v; return $this; }
-
     public function getMateriau(): ?string { return $this->materiau; }
     public function setMateriau(?string $v): static { $this->materiau = $v; return $this; }
-
     public function getNiveauRecommande(): string { return $this->niveauRecommande; }
     public function setNiveauRecommande(string $v): static { $this->niveauRecommande = $v; return $this; }
-
     public function getPrix(): ?string { return $this->prix; }
     public function setPrix(?string $v): static { $this->prix = $v; return $this; }
-
+    public function isDisponible(): bool { return $this->disponible; }
+    public function setDisponible(bool $v): static { $this->disponible = $v; return $this; }
     public function getMarque(): ?Marque { return $this->marque; }
     public function setMarque(?Marque $v): static { $this->marque = $v; return $this; }
-
     public function getRecommandations(): Collection { return $this->recommandations; }
+
+    public function getTypeLabel(): string
+    {
+        return match($this->type) {
+            'raquette'   => 'Raquette',
+            'cordage'    => 'Cordage',
+            'chaussures' => 'Chaussures',
+            'volant'     => 'Volant',
+            'sac'        => 'Sac',
+            'tenue'      => 'Tenue',
+            default      => ucfirst($this->type ?? ''),
+        };
+    }
+
+    public function getNiveauLabel(): string
+    {
+        return match($this->niveauRecommande) {
+            'debutant'      => 'Débutant',
+            'intermediaire' => 'Intermédiaire',
+            'avance'        => 'Avancé',
+            'expert'        => 'Expert',
+            default         => 'Tous niveaux',
+        };
+    }
 }

@@ -1,0 +1,37 @@
+{% for m in materiels %}
+<div style="border:1px solid #ddd; border-radius:8px; overflow:hidden; background:#fff;">
+    {% if m.imageUrl %}
+        <img src="{{ m.imageUrl }}" alt="{{ m.nom }}"
+             style="width:100%; height:160px; object-fit:contain; padding:8px; background:#f9f9f9;">
+    {% else %}
+        <div style="height:160px; display:flex; align-items:center; justify-content:center; background:#f0f4ff; font-size:3rem;">
+            {{ m.type == 'raquette' ? '🏸' : (m.type == 'chaussures' ? '👟' : (m.type == 'cordage' ? '🪢' : (m.type == 'volant' ? '🪶' : '📦'))) }}
+        </div>
+    {% endif %}
+    <div style="padding:12px;">
+        <div style="font-size:.75rem; color:#666; margin-bottom:4px;">
+            {{ m.typeLabel }} • {{ m.marque.nomMarque }}
+        </div>
+        <div style="font-weight:bold; margin-bottom:6px;">{{ m.nom }}</div>
+        <div style="font-size:.8rem; color:#888; margin-bottom:8px;">
+            {{ m.niveauLabel }}
+            {% if m.flexibilite %} • {{ m.flexibilite }}{% endif %}
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            {% if m.prix %}
+                <span style="font-weight:bold; color:#1F3A6D;">{{ m.prix }}€</span>
+            {% else %}
+                <span></span>
+            {% endif %}
+            <a href="{{ path('app_materiel_show', {'id': m.id}) }}"
+               style="padding:6px 12px; background:#1F3A6D; color:white; border-radius:4px; text-decoration:none; font-size:.85rem;">
+                Voir
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div style="grid-column:1/-1; text-align:center; color:#888; padding:40px;">
+    Aucun produit disponible pour l'instant.
+</div>
+{% endfor %}

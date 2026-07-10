@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+{% block title %}Catalogue Matériel{% endblock %}
+
+{% block body %}
+<div style="display:flex; gap:20px; padding:20px;">
+
+    <!-- Filtres -->
+    <div style="width:220px; flex-shrink:0;">
+        <h3>Filtres</h3>
+
+        <div style="margin-bottom:12px;">
+            <label>Rechercher</label><br>
+            <input type="text" id="f-search" placeholder="Nom du produit..."
+                   value="{{ criteres.search }}"
+                   style="width:100%; padding:6px; margin-top:4px;">
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label>Type</label><br>
+            <select id="f-type" style="width:100%; padding:6px; margin-top:4px;">
+                <option value="">Tous les types</option>
+                {% for type in types %}
+                    <option value="{{ type }}" {{ criteres.type == type ? 'selected' : '' }}>
+                        {{ type|capitalize }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label>Niveau</label><br>
+            <select id="f-niveau" style="width:100%; padding:6px; margin-top:4px;">
+                <option value="">Tous</option>
+                <option value="debutant"      {{ criteres.niveau == 'debutant'      ? 'selected' : '' }}>Débutant</option>
+                <option value="intermediaire" {{ criteres.niveau == 'intermediaire' ? 'selected' : '' }}>Intermédiaire</option>
+                <option value="avance"        {{ criteres.niveau == 'avance'        ? 'selected' : '' }}>Avancé</option>
+                <option value="expert"        {{ criteres.niveau == 'expert'        ? 'selected' : '' }}>Expert</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label>Flexibilité</label><br>
+            <select id="f-flex" style="width:100%; padding:6px; margin-top:4px;">
+                <option value="">Toutes</option>
+                {% for f in flexibilites %}
+                    <option value="{{ f }}" {{ criteres.flexibilite == f ? 'selected' : '' }}>
+                        {{ f|capitalize }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label>Équilibre</label><br>
+            <select id="f-eq" style="width:100%; padding:6px; margin-top:4px;">
+                <option value="">Tous</option>
+                <option value="tete-lourde"  {{ criteres.equilibre == 'tete-lourde'  ? 'selected' : '' }}>Tête lourde</option>
+                <option value="equilibre"    {{ criteres.equilibre == 'equilibre'    ? 'selected' : '' }}>Équilibré</option>
+                <option value="manche-lourd" {{ criteres.equilibre == 'manche-lourd' ? 'selected' : '' }}>Manche lourd</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label>Marque</label><br>
+            <select id="f-marque" style="width:100%; padding:6px; margin-top:4px;">
+                <option value="">Toutes</option>
+                {% for m in marques %}
+                    <option value="{{ m.id }}" {{ criteres.marque == (m.id ~ '') ? 'selected' : '' }}>
+                        {{ m.nomMarque }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button onclick="resetFilters()"
+                style="width:100%; padding:8px; background:#eee; border:1px solid #ccc; border-radius:4px; cursor:pointer;">
+            Réinitialiser
+        </button>
+    </div>
+
+    <!-- Résultats -->
+    <div style="flex:1;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2 style="margin:0;">🏸 Catalogue Matériel</h2>
+            <span id="count" style="color:#666;">{{ materiels|length }} produit(s)</span>
+        </div>
+
+        <div id="grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;">
+            {% include 'materiel/_cards.html.twig' with {'materiels': materiels} %}
+        </div>
+
+        <div id="no-result" style="display:none; text-align:center; padding:40px; color:#888;">
+            <p>Aucun produit ne correspond à vos critères.</p>
+            <button onclick="resetFilters()">Réinitialiser les filtres</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+const filters = ['f-search','f-type','f-niveau','f-flex','f-eq','f-marque'];
+let timer;
+
+function applyFilters() {
+    const params = new URLSearchParams();
+    const map = {
+        'f-search': 'search', 'f-type': 'type', 'f-niveau': 'niveau',
+        'f-flex': 'flexibilite', 'f-eq': 'equilibre', 'f-marque': 'marque'
+    };
+    filters.forEach(id => {
+        const el = document.getElementById(id);
+        if (el.value) params.set(map[id], el.value);
+    });
+
+    fetch('/materiels?' + params.toString(), {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('grid').innerHTML = data.html;
+        document.getElementById('count').textContent = data.count + ' produit(s)';
+        document.getElementById('no-result').style.display = data.count === 0 ? 'block' : 'none';
+        document.getElementById('grid').style.display = data.count === 0 ? 'none' : 'grid';
+    });
+}
+
+function resetFilters() {
+    filters.forEach(id => document.getElementById(id).value = '');
+    applyFilters();
+}
+
+filters.forEach(id => {
+    const el = document.getElementById(id);
+    if (el.tagName === 'SELECT') {
+        el.addEventListener('change', applyFilters);
+    } else {
+        el.addEventListener('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(applyFilters, 400);
+        });
+    }
+});
+</script>
+{% endblock %}
