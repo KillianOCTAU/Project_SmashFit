@@ -2,41 +2,48 @@
 {% block title %}Connexion{% endblock %}
 
 {% block body %}
-<div style="max-width:400px; margin:60px auto; padding:20px; border:1px solid #ddd; border-radius:8px;">
-    <h2>🔐 Connexion</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card-sf card p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div style="font-size:2.5rem;">🏸</div>
+                    <h3 class="fw-bold mt-2 mb-1" style="color:var(--sf-dark);">Connexion</h3>
+                    <p class="text-muted small">Accédez à vos recommandations</p>
+                </div>
 
-    {% if error %}
-        <div style="color:red; margin-bottom:10px;">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
+                {% if error %}
+                <div class="alert alert-danger alert-sm py-2 small">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+                {% endif %}
+
+                <form method="post" action="{{ path('app_login') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Email</label>
+                        <input class="form-control" type="email" name="_username"
+                               value="{{ last_username }}" autocomplete="email" autofocus
+                               placeholder="votre@email.com">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small">Mot de passe</label>
+                        <input class="form-control" type="password" name="_password"
+                               autocomplete="current-password" placeholder="••••••••">
+                    </div>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <button class="btn btn-sf w-100 py-2" type="submit">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                    </button>
+                </form>
+
+                <hr class="my-4">
+                <p class="text-center text-muted small mb-0">
+                    Pas encore de compte ?
+                    <a href="{{ path('app_register') }}" style="color:var(--sf-green); font-weight:600;">S'inscrire</a>
+                </p>
+            </div>
         </div>
-    {% endif %}
-
-    {% for message in app.flashes('success') %}
-        <div style="color:green; margin-bottom:10px;">{{ message }}</div>
-    {% endfor %}
-
-    <form method="post" action="{{ path('app_login') }}">
-        <div style="margin-bottom:12px;">
-            <label>Email</label><br>
-            <input type="email" name="_username" value="{{ last_username }}"
-                   style="width:100%; padding:8px; margin-top:4px;"
-                   autocomplete="email" autofocus>
-        </div>
-        <div style="margin-bottom:12px;">
-            <label>Mot de passe</label><br>
-            <input type="password" name="_password"
-                   style="width:100%; padding:8px; margin-top:4px;"
-                   autocomplete="current-password">
-        </div>
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        <button type="submit"
-                style="width:100%; padding:10px; background:#1F3A6D; color:white; border:none; border-radius:4px; cursor:pointer;">
-            Se connecter
-        </button>
-    </form>
-
-    <p style="margin-top:16px; text-align:center;">
-        Pas encore de compte ? <a href="{{ path('app_register') }}">S'inscrire</a>
-    </p>
+    </div>
 </div>
 {% endblock %}

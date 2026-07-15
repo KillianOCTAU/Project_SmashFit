@@ -2,64 +2,95 @@
 {% block title %}{{ materiel.nom }}{% endblock %}
 
 {% block body %}
-<div style="max-width:800px; margin:40px auto; padding:0 20px;">
-    <a href="{{ path('app_materiel_index') }}"
-       style="color:#1F3A6D; text-decoration:none;">← Retour au catalogue</a>
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}" style="color:var(--sf-blue);">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('app_materiel_index') }}" style="color:var(--sf-blue);">Matériels</a></li>
+            <li class="breadcrumb-item active">{{ materiel.nom }}</li>
+        </ol>
+    </nav>
 
-    <div style="display:flex; gap:30px; margin-top:20px;">
-        <div style="width:280px; flex-shrink:0;">
-            {% if materiel.imageUrl %}
-                <img src="{{ materiel.imageUrl }}" alt="{{ materiel.nom }}"
-                     style="width:100%; border-radius:8px; border:1px solid #eee;">
-            {% else %}
-                <div style="height:280px; display:flex; align-items:center; justify-content:center;
-                            background:#f0f4ff; border-radius:8px; font-size:5rem;">
-                    {{ materiel.type == 'raquette' ? '🏸' : '📦' }}
-                </div>
-            {% endif %}
+    <div class="row g-5">
+        <div class="col-md-5">
+            <div class="card-sf card p-4 text-center">
+                {% if materiel.imageUrl %}
+                    <img src="{{ materiel.imageUrl }}" alt="{{ materiel.nom }}"
+                         style="max-height:300px; width:100%; object-fit:contain;">
+                {% else %}
+                    <div style="height:280px; display:flex; align-items:center; justify-content:center; font-size:7rem; background:#f0f4ff; border-radius:8px;">
+                        {{ materiel.type == 'raquette' ? '🏸' : (materiel.type == 'chaussures' ? '👟' : '📦') }}
+                    </div>
+                {% endif %}
+                <span class="badge badge-type badge-{{ materiel.type }} mt-3">{{ materiel.typeLabel }}</span>
+            </div>
         </div>
 
-        <div style="flex:1;">
-            <span style="font-size:.8rem; color:#666;">{{ materiel.typeLabel }} • {{ materiel.marque.nomMarque }}</span>
-            <h1 style="margin:8px 0 16px;">{{ materiel.nom }}</h1>
-            <p style="color:#555; line-height:1.6;">{{ materiel.description }}</p>
+        <div class="col-md-7">
+            <p class="text-muted mb-1" style="font-size:.9rem;">{{ materiel.marque.nomMarque }}</p>
+            <h1 class="fw-bold mb-3" style="color:var(--sf-dark);">{{ materiel.nom }}</h1>
 
-            <table style="margin-top:20px; border-collapse:collapse; width:100%;">
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:8px; color:#888; width:140px;">Niveau recommandé</td>
-                    <td style="padding:8px; font-weight:600;">{{ materiel.niveauLabel }}</td>
-                </tr>
+            {% if materiel.prix %}
+            <div class="mb-3">
+                <span class="fw-bold" style="font-size:1.8rem; color:var(--sf-green);">{{ materiel.prix }}€</span>
+                <span class="text-muted ms-2 small">Prix indicatif</span>
+            </div>
+            {% endif %}
+
+            <p class="text-muted mb-4" style="line-height:1.7;">{{ materiel.description }}</p>
+
+            <h6 class="fw-bold mb-3" style="color:var(--sf-dark);">Caractéristiques</h6>
+            <div class="row g-2 mb-4">
+                <div class="col-6">
+                    <div class="p-3 rounded text-center" style="background:#f0f4ff;">
+                        <div class="small text-muted mb-1">Niveau</div>
+                        <div class="fw-semibold" style="color:var(--sf-dark);">{{ materiel.niveauLabel }}</div>
+                    </div>
+                </div>
                 {% if materiel.poids %}
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:8px; color:#888;">Poids</td>
-                    <td style="padding:8px; font-weight:600;">{{ materiel.poids }}</td>
-                </tr>
+                <div class="col-6">
+                    <div class="p-3 rounded text-center" style="background:#f0f4ff;">
+                        <div class="small text-muted mb-1">Poids</div>
+                        <div class="fw-semibold" style="color:var(--sf-dark);">{{ materiel.poids }}</div>
+                    </div>
+                </div>
                 {% endif %}
                 {% if materiel.flexibilite %}
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:8px; color:#888;">Flexibilité</td>
-                    <td style="padding:8px; font-weight:600;">{{ materiel.flexibilite|capitalize }}</td>
-                </tr>
+                <div class="col-6">
+                    <div class="p-3 rounded text-center" style="background:#f0f4ff;">
+                        <div class="small text-muted mb-1">Flexibilité</div>
+                        <div class="fw-semibold" style="color:var(--sf-dark);">{{ materiel.flexibilite|capitalize }}</div>
+                    </div>
+                </div>
                 {% endif %}
                 {% if materiel.equilibre %}
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:8px; color:#888;">Équilibre</td>
-                    <td style="padding:8px; font-weight:600;">{{ materiel.equilibre|replace({'-': ' '})|capitalize }}</td>
-                </tr>
+                <div class="col-6">
+                    <div class="p-3 rounded text-center" style="background:#f0f4ff;">
+                        <div class="small text-muted mb-1">Équilibre</div>
+                        <div class="fw-semibold" style="color:var(--sf-dark);">{{ materiel.equilibre|replace({'-': ' '})|capitalize }}</div>
+                    </div>
+                </div>
                 {% endif %}
                 {% if materiel.materiau %}
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:8px; color:#888;">Matériau</td>
-                    <td style="padding:8px; font-weight:600;">{{ materiel.materiau }}</td>
-                </tr>
+                <div class="col-6">
+                    <div class="p-3 rounded text-center" style="background:#f0f4ff;">
+                        <div class="small text-muted mb-1">Matériau</div>
+                        <div class="fw-semibold" style="color:var(--sf-dark);">{{ materiel.materiau }}</div>
+                    </div>
+                </div>
                 {% endif %}
-                {% if materiel.prix %}
-                <tr>
-                    <td style="padding:8px; color:#888;">Prix indicatif</td>
-                    <td style="padding:8px; font-weight:600; color:#1F3A6D;">{{ materiel.prix }}€</td>
-                </tr>
+            </div>
+
+            <div class="d-flex gap-3">
+                <a href="{{ path('app_materiel_index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Retour
+                </a>
+                {% if app.user %}
+                <a href="{{ path('app_recommandation_index') }}" class="btn btn-sf px-4">
+                    <i class="bi bi-stars me-2"></i>Mes recommandations
+                </a>
                 {% endif %}
-            </table>
+            </div>
         </div>
     </div>
 </div>

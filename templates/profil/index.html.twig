@@ -2,52 +2,122 @@
 {% block title %}Mon Profil{% endblock %}
 
 {% block body %}
-<div style="max-width:700px; margin:40px auto; padding:0 20px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <h1>👤 Mon profil</h1>
-        <a href="{{ path('app_profil_edit') }}"
-           style="padding:8px 16px; background:#1F3A6D; color:white; border-radius:4px; text-decoration:none;">
-            ✏️ Modifier
-        </a>
+<div class="page-header">
+    <div class="container">
+        <h1 class="fw-bold mb-1">👤 Mon profil</h1>
+        <p class="opacity-75 mb-0">Gérez vos informations et votre profil joueur</p>
     </div>
+</div>
 
-    <div style="background:#f8f9fa; border-radius:8px; padding:24px; margin-bottom:20px;">
-        <h3 style="margin-top:0;">Informations du compte</h3>
-        <p><strong>Pseudo :</strong> {{ user.pseudo }}</p>
-        <p><strong>Email :</strong> {{ user.email }}</p>
-        <p><strong>Membre depuis :</strong> {{ user.dateInscription|date('d/m/Y') }}</p>
-    </div>
+<div class="container pb-5">
+    <div class="row g-4">
 
-    <div style="background:#f8f9fa; border-radius:8px; padding:24px; margin-bottom:20px;">
-        <h3 style="margin-top:0;">Profil joueur</h3>
-
-        {% if not profil.isComplete %}
-            <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:4px; padding:12px; margin-bottom:16px;">
-                ⚠️ Profil incomplet.
-                <a href="{{ path('app_profil_edit') }}">Complétez votre profil</a>
-                pour obtenir des recommandations personnalisées.
+        <!-- Sidebar compte -->
+        <div class="col-md-4">
+            <div class="card-sf card p-4 text-center">
+                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 fw-bold"
+                     style="width:72px;height:72px;background:linear-gradient(135deg,var(--sf-dark),var(--sf-blue));color:#fff;font-size:1.8rem;">
+                    {{ user.pseudo|first|upper }}
+                </div>
+                <h5 class="fw-bold mb-1" style="color:var(--sf-dark);">{{ user.pseudo }}</h5>
+                <p class="text-muted small mb-3">{{ user.email }}</p>
+                {% if user.isAdmin %}
+                    <span class="badge mb-3 px-3" style="background:var(--sf-dark);">Administrateur</span>
+                {% endif %}
+                <p class="text-muted small mb-4">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    Membre depuis le {{ user.dateInscription|date('d/m/Y') }}
+                </p>
+                <div class="d-grid gap-2">
+                    <a href="{{ path('app_profil_edit') }}" class="btn btn-sf">
+                        <i class="bi bi-pencil me-2"></i>Modifier mon profil
+                    </a>
+                    {% if profil.isComplete %}
+                    <a href="{{ path('app_recommandation_generate') }}" class="btn btn-sf-outline">
+                        <i class="bi bi-stars me-2"></i>Actualiser mes recos
+                    </a>
+                    {% endif %}
+                </div>
             </div>
-        {% endif %}
+        </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <div><strong>Nom :</strong> {{ profil.nom ?? '—' }}</div>
-            <div><strong>Prénom :</strong> {{ profil.prenom ?? '—' }}</div>
-            <div><strong>Âge :</strong> {{ profil.age ? profil.age ~ ' ans' : '—' }}</div>
-            <div><strong>Club :</strong> {{ profil.club ?? '—' }}</div>
-            <div><strong>N° Licence :</strong> {{ profil.numeroLicence ?? '—' }}</div>
-            <div><strong>Niveau :</strong> {{ profil.niveauLabel }}</div>
-            <div><strong>Style de jeu :</strong> {{ profil.styleJeuLabel }}</div>
-            <div><strong>Fréquence :</strong> {{ profil.frequence ? profil.frequence|capitalize : '—' }}</div>
+        <!-- Profil joueur -->
+        <div class="col-md-8">
+            {% if not profil.isComplete %}
+            <div class="alert alert-warning d-flex align-items-start gap-3 mb-4">
+                <i class="bi bi-exclamation-triangle-fill fs-5 mt-1"></i>
+                <div>
+                    <strong>Profil incomplet</strong><br>
+                    Renseignez votre niveau, style de jeu et fréquence pour obtenir des recommandations personnalisées.
+                    <a href="{{ path('app_profil_edit') }}" class="alert-link">Compléter mon profil →</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card-sf card p-4 mb-4">
+                <h6 class="fw-bold mb-4" style="color:var(--sf-dark);">
+                    <i class="bi bi-person-badge me-2" style="color:var(--sf-green);"></i>Informations personnelles
+                </h6>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded" style="background:#f8fbff;">
+                            <div class="small text-muted mb-1">Nom complet</div>
+                            <div class="fw-semibold">{{ profil.prenom ?? '—' }} {{ profil.nom ?? '' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded" style="background:#f8fbff;">
+                            <div class="small text-muted mb-1">Âge</div>
+                            <div class="fw-semibold">{{ profil.age ? profil.age ~ ' ans' : '—' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded" style="background:#f8fbff;">
+                            <div class="small text-muted mb-1">Club</div>
+                            <div class="fw-semibold">{{ profil.club ?? '—' }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded" style="background:#f8fbff;">
+                            <div class="small text-muted mb-1">N° Licence FFBaD</div>
+                            <div class="fw-semibold">{{ profil.numeroLicence ?? '—' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-sf card p-4">
+                <h6 class="fw-bold mb-4" style="color:var(--sf-dark);">
+                    <i class="bi bi-controller me-2" style="color:var(--sf-green);"></i>Profil joueur
+                </h6>
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div class="p-3 rounded text-center" style="background:{% if profil.niveau %}#e8f5e9{% else %}#f8fbff{% endif %};">
+                            <div class="small text-muted mb-1">Niveau</div>
+                            <div class="fw-bold" style="color:{% if profil.niveau %}var(--sf-green){% else %}var(--sf-gray){% endif %};">
+                                {{ profil.niveauLabel }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="p-3 rounded text-center" style="background:{% if profil.styleJeu %}#e8f5e9{% else %}#f8fbff{% endif %};">
+                            <div class="small text-muted mb-1">Style de jeu</div>
+                            <div class="fw-bold" style="color:{% if profil.styleJeu %}var(--sf-green){% else %}var(--sf-gray){% endif %};">
+                                {{ profil.styleJeuLabel }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="p-3 rounded text-center" style="background:{% if profil.frequence %}#e8f5e9{% else %}#f8fbff{% endif %};">
+                            <div class="small text-muted mb-1">Fréquence</div>
+                            <div class="fw-bold" style="color:{% if profil.frequence %}var(--sf-green){% else %}var(--sf-gray){% endif %};">
+                                {{ profil.frequence ? profil.frequence|capitalize : '—' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    {% if profil.isComplete %}
-    <div style="text-align:center;">
-        <a href="{{ path('app_recommandation_generate') }}"
-           style="padding:12px 32px; background:#4CAF50; color:white; border-radius:4px; text-decoration:none; font-size:1.1rem;">
-            🎯 Voir mes recommandations
-        </a>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

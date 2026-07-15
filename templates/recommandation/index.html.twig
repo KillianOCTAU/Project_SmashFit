@@ -2,77 +2,97 @@
 {% block title %}Mes recommandations{% endblock %}
 
 {% block body %}
-<div style="max-width:900px; margin:40px auto; padding:0 20px;">
-
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <h1>⭐ Mes recommandations</h1>
-        <a href="{{ path('app_recommandation_generate') }}"
-           style="padding:8px 16px; background:#4CAF50; color:white; border-radius:4px; text-decoration:none;">
-            🔄 Actualiser
+<div class="page-header">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="fw-bold mb-1">⭐ Mes recommandations</h1>
+            <p class="opacity-75 mb-0">Sélection personnalisée selon votre profil joueur</p>
+        </div>
+        <a href="{{ path('app_recommandation_generate') }}" class="btn btn-sf px-4">
+            <i class="bi bi-arrow-clockwise me-2"></i>Actualiser
         </a>
     </div>
+</div>
 
-    {# Récap profil #}
-    <div style="background:#f0f4ff; border-radius:8px; padding:16px; margin-bottom:24px; display:flex; gap:24px; flex-wrap:wrap;">
-        <div><strong>Niveau :</strong> {{ profil.niveauLabel }}</div>
-        <div><strong>Style :</strong> {{ profil.styleJeuLabel }}</div>
-        <div><strong>Fréquence :</strong> {{ profil.frequence|capitalize }}</div>
-        <div style="margin-left:auto; color:#888;">{{ recommandations|length }} résultat(s)</div>
+<div class="container pb-5">
+
+    <!-- Récap profil -->
+    <div class="card-sf card p-4 mb-4" style="background:linear-gradient(135deg,#f0f4ff,#e8f5e9);">
+        <div class="row align-items-center g-3">
+            <div class="col-auto">
+                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                     style="width:50px;height:50px;background:var(--sf-dark);color:#fff;font-size:1.2rem;">
+                    {{ app.user.pseudo|first|upper }}
+                </div>
+            </div>
+            <div class="col">
+                <div class="fw-bold" style="color:var(--sf-dark);">{{ app.user.pseudo }}</div>
+                <div class="text-muted small">{{ profil.niveauLabel }} · {{ profil.styleJeuLabel }} · {{ profil.frequence|capitalize }}</div>
+            </div>
+            <div class="col-auto">
+                <span class="badge px-3 py-2" style="background:var(--sf-dark); color:#fff;">
+                    {{ recommandations|length }} résultat(s)
+                </span>
+            </div>
+        </div>
     </div>
 
-    {% for message in app.flashes('success') %}
-        <div style="background:#d4edda; color:#155724; padding:10px; border-radius:4px; margin-bottom:16px;">
-            {{ message }}
-        </div>
-    {% endfor %}
-
-    {# Liste des recommandations #}
-    <div style="display:flex; flex-direction:column; gap:16px;">
+    <!-- Liste -->
+    <div class="d-flex flex-column gap-3">
         {% for reco in recommandations %}
-        <div style="border:1px solid #ddd; border-radius:8px; padding:16px; background:white; display:flex; gap:16px; align-items:center;">
+        <div class="card-sf card p-4">
+            <div class="row align-items-center g-3">
 
-            {# Image #}
-            <div style="width:80px; height:80px; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:#f0f4ff; border-radius:8px; font-size:2.5rem;">
-                {% if reco.materiel.imageUrl %}
-                    <img src="{{ reco.materiel.imageUrl }}" alt="{{ reco.materiel.nom }}"
-                         style="width:100%; height:100%; object-fit:contain; border-radius:8px;">
-                {% else %}
-                    {{ reco.materiel.type == 'raquette' ? '🏸' : (reco.materiel.type == 'chaussures' ? '👟' : '📦') }}
-                {% endif %}
-            </div>
+                <!-- Image -->
+                <div class="col-auto">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center"
+                         style="width:72px;height:72px;background:#f0f4ff;font-size:2.2rem;">
+                        {% if reco.materiel.imageUrl %}
+                            <img src="{{ reco.materiel.imageUrl }}" alt="{{ reco.materiel.nom }}"
+                                 style="width:100%;height:100%;object-fit:contain;border-radius:8px;">
+                        {% else %}
+                            {{ reco.materiel.type == 'raquette' ? '🏸' : (reco.materiel.type == 'chaussures' ? '👟' : '📦') }}
+                        {% endif %}
+                    </div>
+                </div>
 
-            {# Infos produit #}
-            <div style="flex:1;">
-                <div style="font-size:.8rem; color:#888; margin-bottom:2px;">
-                    {{ reco.materiel.typeLabel }} • {{ reco.materiel.marque.nomMarque }}
+                <!-- Infos -->
+                <div class="col">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge badge-type badge-{{ reco.materiel.type }}">{{ reco.materiel.typeLabel }}</span>
+                        <span class="text-muted small">{{ reco.materiel.marque.nomMarque }}</span>
+                    </div>
+                    <div class="fw-bold mb-1" style="color:var(--sf-dark); font-size:1.05rem;">
+                        {{ reco.materiel.nom }}
+                    </div>
+                    {% if reco.explication %}
+                    <div class="text-muted small">
+                        <i class="bi bi-lightbulb me-1" style="color:var(--sf-green);"></i>
+                        {{ reco.explication }}
+                    </div>
+                    {% endif %}
                 </div>
-                <div style="font-weight:bold; font-size:1.1rem; margin-bottom:4px;">
-                    {{ reco.materiel.nom }}
-                </div>
-                {% if reco.explication %}
-                <div style="font-size:.85rem; color:#555; font-style:italic;">
-                    💡 {{ reco.explication }}
-                </div>
-                {% endif %}
-            </div>
 
-            {# Score #}
-            <div style="text-align:center; min-width:100px;">
-                <div style="font-size:1.8rem; font-weight:bold; color:{% if reco.score >= 0.7 %}#155724{% elseif reco.score >= 0.5 %}#856404{% else %}#721c24{% endif %};">
-                    {{ reco.scorePourcent }}%
+                <!-- Score -->
+                <div class="col-md-3 text-center">
+                    <div class="fw-bold mb-1"
+                         style="font-size:2rem; color:{% if reco.score >= 0.7 %}var(--sf-green){% elseif reco.score >= 0.5 %}#f59e0b{% else %}#ef4444{% endif %};">
+                        {{ reco.scorePourcent }}%
+                    </div>
+                    <div class="score-bar mb-1">
+                        <div class="score-bar-fill"
+                             style="width:{{ reco.scorePourcent }}%; background:{% if reco.score >= 0.7 %}var(--sf-green){% elseif reco.score >= 0.5 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                    </div>
+                    <div class="text-muted" style="font-size:.75rem;">compatibilité</div>
                 </div>
-                <div style="font-size:.75rem; color:#888; margin-bottom:8px;">compatibilité</div>
-                <div style="background:#eee; border-radius:4px; height:6px; overflow:hidden;">
-                    <div style="height:100%; width:{{ reco.scorePourcent }}%; background:{% if reco.score >= 0.7 %}#4CAF50{% elseif reco.score >= 0.5 %}#ffc107{% else %}#dc3545{% endif %};"></div>
-                </div>
-            </div>
 
-            {# Bouton #}
-            <div>
-                <a href="{{ path('app_materiel_show', {'id': reco.materiel.id}) }}"
-                   style="padding:8px 16px; background:#1F3A6D; color:white; border-radius:4px; text-decoration:none; font-size:.9rem;">
-                    Voir
-                </a>
+                <!-- Action -->
+                <div class="col-auto">
+                    <a href="{{ path('app_materiel_show', {'id': reco.materiel.id}) }}"
+                       class="btn btn-sf-dark btn-sm px-3">
+                        Voir <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
             </div>
         </div>
         {% endfor %}

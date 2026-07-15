@@ -1,127 +1,157 @@
 {% extends 'base.html.twig' %}
 {% block title %}Catalogue Matériel{% endblock %}
 
+{% block extra_css %}
+<style>
+.filter-sidebar { background:#fff; border-radius:12px; padding:24px; box-shadow:0 2px 16px rgba(0,0,0,.07); position:sticky; top:80px; }
+.filter-label { font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--sf-gray); margin-bottom:6px; }
+.mat-card { border:none; border-radius:12px; box-shadow:0 2px 16px rgba(0,0,0,.07); transition:all .2s; overflow:hidden; }
+.mat-card:hover { transform:translateY(-4px); box-shadow:0 8px 32px rgba(0,0,0,.13); }
+.mat-img { height:180px; object-fit:contain; padding:16px; background:#f8fbff; }
+.mat-placeholder { height:180px; display:flex; align-items:center; justify-content:center; background:#f0f4ff; font-size:3.5rem; }
+.badge-type { font-size:.72rem; font-weight:600; padding:4px 10px; border-radius:20px; }
+</style>
+{% endblock %}
+
 {% block body %}
-<div style="display:flex; gap:20px; padding:20px;">
-
-    <!-- Filtres -->
-    <div style="width:220px; flex-shrink:0;">
-        <h3>Filtres</h3>
-
-        <div style="margin-bottom:12px;">
-            <label>Rechercher</label><br>
-            <input type="text" id="f-search" placeholder="Nom du produit..."
-                   value="{{ criteres.search }}"
-                   style="width:100%; padding:6px; margin-top:4px;">
+<div class="page-header">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="fw-bold mb-1">🏸 Catalogue Matériel</h1>
+            <p class="opacity-75 mb-0">Explorez et filtrez notre sélection d'équipements</p>
         </div>
-
-        <div style="margin-bottom:12px;">
-            <label>Type</label><br>
-            <select id="f-type" style="width:100%; padding:6px; margin-top:4px;">
-                <option value="">Tous les types</option>
-                {% for type in types %}
-                    <option value="{{ type }}" {{ criteres.type == type ? 'selected' : '' }}>
-                        {{ type|capitalize }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label>Niveau</label><br>
-            <select id="f-niveau" style="width:100%; padding:6px; margin-top:4px;">
-                <option value="">Tous</option>
-                <option value="debutant"      {{ criteres.niveau == 'debutant'      ? 'selected' : '' }}>Débutant</option>
-                <option value="intermediaire" {{ criteres.niveau == 'intermediaire' ? 'selected' : '' }}>Intermédiaire</option>
-                <option value="avance"        {{ criteres.niveau == 'avance'        ? 'selected' : '' }}>Avancé</option>
-                <option value="expert"        {{ criteres.niveau == 'expert'        ? 'selected' : '' }}>Expert</option>
-            </select>
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label>Flexibilité</label><br>
-            <select id="f-flex" style="width:100%; padding:6px; margin-top:4px;">
-                <option value="">Toutes</option>
-                {% for f in flexibilites %}
-                    <option value="{{ f }}" {{ criteres.flexibilite == f ? 'selected' : '' }}>
-                        {{ f|capitalize }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label>Équilibre</label><br>
-            <select id="f-eq" style="width:100%; padding:6px; margin-top:4px;">
-                <option value="">Tous</option>
-                <option value="tete-lourde"  {{ criteres.equilibre == 'tete-lourde'  ? 'selected' : '' }}>Tête lourde</option>
-                <option value="equilibre"    {{ criteres.equilibre == 'equilibre'    ? 'selected' : '' }}>Équilibré</option>
-                <option value="manche-lourd" {{ criteres.equilibre == 'manche-lourd' ? 'selected' : '' }}>Manche lourd</option>
-            </select>
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label>Marque</label><br>
-            <select id="f-marque" style="width:100%; padding:6px; margin-top:4px;">
-                <option value="">Toutes</option>
-                {% for m in marques %}
-                    <option value="{{ m.id }}" {{ criteres.marque == (m.id ~ '') ? 'selected' : '' }}>
-                        {{ m.nomMarque }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <button onclick="resetFilters()"
-                style="width:100%; padding:8px; background:#eee; border:1px solid #ccc; border-radius:4px; cursor:pointer;">
-            Réinitialiser
-        </button>
+        {% if app.user %}
+        <a href="{{ path('app_recommandation_index') }}" class="btn btn-sf px-4">
+            <i class="bi bi-stars me-2"></i>Mes recommandations
+        </a>
+        {% endif %}
     </div>
+</div>
 
-    <!-- Résultats -->
-    <div style="flex:1;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <h2 style="margin:0;">🏸 Catalogue Matériel</h2>
-            <span id="count" style="color:#666;">{{ materiels|length }} produit(s)</span>
+<div class="container pb-5">
+    <div class="row g-4">
+
+        <!-- Filtres -->
+        <div class="col-lg-3">
+            <div class="filter-sidebar">
+                <h6 class="fw-bold mb-4" style="color:var(--sf-dark);">
+                    <i class="bi bi-funnel me-2"></i>Filtres
+                </h6>
+
+                <div class="mb-3">
+                    <div class="filter-label">Rechercher</div>
+                    <input type="text" id="f-search" class="form-control form-control-sm"
+                           placeholder="Nom du produit..."
+                           value="{{ criteres.search }}">
+                </div>
+
+                <div class="mb-3">
+                    <div class="filter-label">Type</div>
+                    <select id="f-type" class="form-select form-select-sm">
+                        <option value="">Tous les types</option>
+                        {% for type in types %}
+                        <option value="{{ type }}" {{ criteres.type == type ? 'selected' : '' }}>
+                            {{ type|capitalize }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <div class="filter-label">Niveau</div>
+                    <select id="f-niveau" class="form-select form-select-sm">
+                        <option value="">Tous</option>
+                        <option value="debutant"      {{ criteres.niveau == 'debutant'      ? 'selected' : '' }}>Débutant</option>
+                        <option value="intermediaire" {{ criteres.niveau == 'intermediaire' ? 'selected' : '' }}>Intermédiaire</option>
+                        <option value="avance"        {{ criteres.niveau == 'avance'        ? 'selected' : '' }}>Avancé</option>
+                        <option value="expert"        {{ criteres.niveau == 'expert'        ? 'selected' : '' }}>Expert</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <div class="filter-label">Flexibilité</div>
+                    <select id="f-flex" class="form-select form-select-sm">
+                        <option value="">Toutes</option>
+                        {% for f in flexibilites %}
+                        <option value="{{ f }}" {{ criteres.flexibilite == f ? 'selected' : '' }}>
+                            {{ f|capitalize }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <div class="filter-label">Équilibre</div>
+                    <select id="f-eq" class="form-select form-select-sm">
+                        <option value="">Tous</option>
+                        <option value="tete-lourde"  {{ criteres.equilibre == 'tete-lourde'  ? 'selected' : '' }}>Tête lourde</option>
+                        <option value="equilibre"    {{ criteres.equilibre == 'equilibre'    ? 'selected' : '' }}>Équilibré</option>
+                        <option value="manche-lourd" {{ criteres.equilibre == 'manche-lourd' ? 'selected' : '' }}>Manche lourd</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <div class="filter-label">Marque</div>
+                    <select id="f-marque" class="form-select form-select-sm">
+                        <option value="">Toutes les marques</option>
+                        {% for m in marques %}
+                        <option value="{{ m.id }}" {{ criteres.marque == (m.id ~ '') ? 'selected' : '' }}>
+                            {{ m.nomMarque }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button onclick="resetFilters()" class="btn btn-outline-secondary btn-sm w-100">
+                    <i class="bi bi-x-circle me-1"></i>Réinitialiser
+                </button>
+            </div>
         </div>
 
-        <div id="grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px;">
-            {% include 'materiel/_cards.html.twig' with {'materiels': materiels} %}
-        </div>
+        <!-- Résultats -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span id="count" class="text-muted small fw-semibold">
+                    <i class="bi bi-grid me-1"></i>{{ materiels|length }} produit(s) trouvé(s)
+                </span>
+            </div>
 
-        <div id="no-result" style="display:none; text-align:center; padding:40px; color:#888;">
-            <p>Aucun produit ne correspond à vos critères.</p>
-            <button onclick="resetFilters()">Réinitialiser les filtres</button>
+            <div id="grid" class="row g-3">
+                {% include 'materiel/_cards.html.twig' with {'materiels': materiels} %}
+            </div>
+
+            <div id="no-result" class="text-center py-5 d-none">
+                <div style="font-size:3rem; opacity:.3;">🔍</div>
+                <h5 class="text-muted mt-3">Aucun produit ne correspond à vos critères</h5>
+                <button onclick="resetFilters()" class="btn btn-sf mt-3">Réinitialiser les filtres</button>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block javascripts %}
+{% block extra_js %}
 <script>
 const filters = ['f-search','f-type','f-niveau','f-flex','f-eq','f-marque'];
+const map = { 'f-search':'search','f-type':'type','f-niveau':'niveau','f-flex':'flexibilite','f-eq':'equilibre','f-marque':'marque' };
 let timer;
 
 function applyFilters() {
     const params = new URLSearchParams();
-    const map = {
-        'f-search': 'search', 'f-type': 'type', 'f-niveau': 'niveau',
-        'f-flex': 'flexibilite', 'f-eq': 'equilibre', 'f-marque': 'marque'
-    };
     filters.forEach(id => {
         const el = document.getElementById(id);
         if (el.value) params.set(map[id], el.value);
     });
-
-    fetch('/materiels?' + params.toString(), {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
+    const grid = document.getElementById('grid');
+    grid.style.opacity = '.5';
+    fetch('/materiels?' + params.toString(), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
     .then(r => r.json())
     .then(data => {
-        document.getElementById('grid').innerHTML = data.html;
-        document.getElementById('count').textContent = data.count + ' produit(s)';
-        document.getElementById('no-result').style.display = data.count === 0 ? 'block' : 'none';
-        document.getElementById('grid').style.display = data.count === 0 ? 'none' : 'grid';
+        grid.innerHTML = data.html;
+        grid.style.opacity = '1';
+        document.getElementById('count').innerHTML = '<i class="bi bi-grid me-1"></i>' + data.count + ' produit(s) trouvé(s)';
+        document.getElementById('no-result').classList.toggle('d-none', data.count > 0);
+        grid.classList.toggle('d-none', data.count === 0);
     });
 }
 
@@ -135,10 +165,7 @@ filters.forEach(id => {
     if (el.tagName === 'SELECT') {
         el.addEventListener('change', applyFilters);
     } else {
-        el.addEventListener('input', () => {
-            clearTimeout(timer);
-            timer = setTimeout(applyFilters, 400);
-        });
+        el.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(applyFilters, 400); });
     }
 });
 </script>
