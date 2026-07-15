@@ -53,6 +53,15 @@ class BwfApiService
         ];
     }
 
+    public function getActualites(int $n = 3): array
+    {
+        return [
+            ['titre' => "Championnats d'Europe 2025 – Résultats",  'date' => '2025-03-15'],
+            ['titre' => 'Victor Axelsen conserve sa place de N°1', 'date' => '2025-03-10'],
+            ['titre' => 'Nouvelles règles BWF pour 2025',          'date' => '2025-02-28'],
+        ];
+    }
+
     private function demoClubs(string $query): array
     {
         $clubs = [

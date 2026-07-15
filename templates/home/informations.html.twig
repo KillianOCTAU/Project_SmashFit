@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+{% block title %}Informations{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="fw-bold mb-2">📖 Guide d'équipement</h1>
+        <p class="opacity-75 mb-0">Tout ce que vous devez savoir pour choisir votre matériel</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card-sf card p-4 h-100">
+                <h4 class="fw-bold mb-3" style="color:var(--sf-dark)">🏸 Choisir sa raquette</h4>
+                <p class="text-muted">La raquette est l'élément le plus important de votre équipement.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Tête lourde</strong> → attaquants, smash puissant</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Équilibrée</strong> → joueurs complets, polyvalence</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Manche lourd</strong> → défenseurs, jeu au filet</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Flexible</strong> → débutants, plus d'indulgence</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Rigide</strong> → avancés, meilleur contrôle</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-sf card p-4 h-100">
+                <h4 class="fw-bold mb-3" style="color:var(--sf-dark)">👟 Choisir ses chaussures</h4>
+                <p class="text-muted">Les chaussures de badminton sont indispensables pour éviter les blessures.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Semelle non-marquante pour les parquets</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Amorti latéral pour les appuis rapides</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Légèreté pour la vitesse de déplacement</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Tige basse pour la mobilité</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-sf card p-4 h-100">
+                <h4 class="fw-bold mb-3" style="color:var(--sf-dark)">🪢 Choisir son cordage</h4>
+                <p class="text-muted">Le cordage influence directement le feeling et la puissance de frappe.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Tension basse (20-22 lbs)</strong> → débutants, plus de puissance</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Tension haute (26-30 lbs)</strong> → experts, plus de contrôle</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Diamètre fin</strong> → meilleur feeling</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i><strong>Diamètre épais</strong> → plus durable</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-sf card p-4 h-100">
+                <h4 class="fw-bold mb-3" style="color:var(--sf-dark)">🎯 Les niveaux de jeu</h4>
+                <ul class="list-unstyled">
+                    <li class="mb-3 p-3 rounded" style="background:#f0f4ff">
+                        <strong style="color:var(--sf-dark)">Débutant</strong><br>
+                        <small class="text-muted">Vous découvrez le badminton. Privilégiez légèreté et indulgence.</small>
+                    </li>
+                    <li class="mb-3 p-3 rounded" style="background:#f0f4ff">
+                        <strong style="color:var(--sf-dark)">Intermédiaire</strong><br>
+                        <small class="text-muted">Vous jouez en club régulièrement. Cherchez équilibre et polyvalence.</small>
+                    </li>
+                    <li class="mb-3 p-3 rounded" style="background:#f0f4ff">
+                        <strong style="color:var(--sf-dark)">Avancé / Expert</strong><br>
+                        <small class="text-muted">Compétiteur. Matériel spécialisé selon votre style de jeu.</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
